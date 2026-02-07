@@ -90,14 +90,12 @@
     <script>
         // Get duration from query parameter or use default (5 seconds)
         const urlParams = new URLSearchParams(window.location.search);
-        const duration = parseInt(urlParams.get('duration') || '5') * 1000; // Convert to milliseconds
+        const durationParam = parseInt(urlParams.get('duration') || '5', 10);
+        const duration = Math.max(1, durationParam) * 1000; // Convert to milliseconds, minimum 1 second
 
         const letterDisplay = document.getElementById('letter-display');
         const progressBar = document.getElementById('progress-bar');
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-        let progressInterval = null;
-        let startTime = null;
 
         function getRandomLetter() {
             return alphabet[Math.floor(Math.random() * alphabet.length)];
@@ -114,13 +112,6 @@
             // Start animation
             progressBar.style.transition = `width ${duration}ms linear`;
             progressBar.style.width = '0%';
-            
-            startTime = Date.now();
-            
-            // Clear any existing interval
-            if (progressInterval) {
-                clearInterval(progressInterval);
-            }
         }
 
         function handleClick() {
@@ -140,10 +131,7 @@
         document.body.addEventListener('click', handleClick);
         
         // Also support touch events for mobile
-        document.body.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevent double-tap zoom
-            handleClick();
-        });
+        document.body.addEventListener('touchstart', handleClick);
     </script>
 </body>
 </html>
