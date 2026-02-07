@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popcorn Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        #letter-display {
+            font-size: 30vmin;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #progress-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00d2ff 0%, #3a47d5 100%);
+            width: 100%;
+            transition: width linear;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            #letter-display {
+                font-size: 40vmin;
+            }
+            
+            #progress-container {
+                height: 15px;
+            }
+        }
+
+        /* Prevent text selection on mobile */
+        body {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body>
+    <div id="letter-display"></div>
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <script>
+        // Get duration from query parameter or use default (5 seconds)
+        const urlParams = new URLSearchParams(window.location.search);
+        const duration = parseInt(urlParams.get('duration') || '5') * 1000; // Convert to milliseconds
+
+        const letterDisplay = document.getElementById('letter-display');
+        const progressBar = document.getElementById('progress-bar');
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        let progressInterval = null;
+        let startTime = null;
+
+        function getRandomLetter() {
+            return alphabet[Math.floor(Math.random() * alphabet.length)];
+        }
+
+        function startProgress() {
+            // Reset progress bar
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '100%';
+            
+            // Force reflow
+            void progressBar.offsetWidth;
+            
+            // Start animation
+            progressBar.style.transition = `width ${duration}ms linear`;
+            progressBar.style.width = '0%';
+            
+            startTime = Date.now();
+            
+            // Clear any existing interval
+            if (progressInterval) {
+                clearInterval(progressInterval);
+            }
+        }
+
+        function handleClick() {
+            // Show random letter
+            letterDisplay.textContent = getRandomLetter();
+            
+            // Trigger fade-in animation
+            letterDisplay.style.animation = 'none';
+            void letterDisplay.offsetWidth; // Force reflow
+            letterDisplay.style.animation = 'fadeIn 0.3s ease-out';
+            
+            // Start/restart progress bar
+            startProgress();
+        }
+
+        // Add click event listener
+        document.body.addEventListener('click', handleClick);
+        
+        // Also support touch events for mobile
+        document.body.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent double-tap zoom
+            handleClick();
+        });
+    </script>
+</body>
+</html>
