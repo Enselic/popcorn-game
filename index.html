@@ -26,6 +26,8 @@
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         #letter-display {
@@ -72,12 +74,6 @@
             #progress-container {
                 height: 15px;
             }
-        }
-
-        /* Prevent text selection on mobile */
-        body {
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
     </style>
 </head>
@@ -127,11 +123,8 @@
             startProgress();
         }
 
-        // Add click event listener
+        // Add click event listener (works for both mouse and touch)
         document.body.addEventListener('click', handleClick);
-        
-        // Also support touch events for mobile
-        document.body.addEventListener('touchstart', handleClick);
     </script>
 </body>
 </html>
